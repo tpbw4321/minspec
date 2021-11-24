@@ -1,12 +1,20 @@
+from enum import Enum
+from datetime import datetime
+
 class Event:
-    def __init__(self, eventType, cb, data):
+    def __init__(self, eventType, data):
         self.eventType = eventType
-        self.cb = cb
         self.data = data
 
 class EventQueue:
-    def __init__(self):
-        self.queue = []
+    def __init__(self, eventProcessor=None):
+        if not eventProcessor:
+            print("eventProcessor is None")
+            return None
+        self.eventQueue = []
+        self.eventlist = []
+        self.services = []
+        self.eventProcessor = eventProcessor
 
     def EventQueuePush(self, event):
         self.queue.append(event)
@@ -16,17 +24,28 @@ class EventQueue:
             return self.queue.pop()
         return None
 
-    def EventQueueProcess(self):
+    def Process(self):
         while True:
-            e = self.EventQueuePop()
-            if e:
-                e.cb(e)
+            if len(self.eventQueue):
+                event = self.eventQueue.pop()
+                print(f'{datetime.now()}: {event.eventType}')
+                self.eventProcessor(event.eventType)
 
-def eventCB(event:Event):
-    print("EventType: %d Data: %d" % (event.eventType, event.data))
+    def EventQueueRegister(self, services):
+        for service in services:
+            if hasattr(service,'events'):
+                for event in service.events:
+                    self.eventlist.append(event)
+                self.services.append(service)
+
+def EventQueueTest():
+    class EVENTS(Enum):
+        EVENT_A = 0
+        EVENT_B = 1
+
+    eq = EventQueue()
+    eq.EventQueueRegister(EVENTS)
+    print(eq.eventlist)
 
 if __name__ == "__main__":
-    e = Event(0, eventCB, 5)
-    eq = EventQueue()
-    eq.EventQueuePush(e)
-    eq.EventQueueProcess()
+    EventQueueTest()
