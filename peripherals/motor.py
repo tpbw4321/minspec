@@ -1,4 +1,3 @@
-from enum import Enum
 import RPi.GPIO as GPIO
 import sys
 import time
@@ -7,12 +6,6 @@ A = 38
 B = 40
 sleepTime = 1
 
-class MotorState(Enum):
-    STATE_UNKNOWN = 0
-    STATE_STOP = 1
-    STATE_FORWARD = 2
-    STATE_BACKWARD = 3
-
 class Motor:
     def __init__(self, a=None, b=None):
         if (not a or not b):
@@ -20,28 +13,21 @@ class Motor:
             return None
         self.a = a
         self.b = b
-        self.state = MotorState.STATE_UNKNOWN
 
         GPIO.setup(self.a, GPIO.OUT, initial=GPIO.LOW)
         GPIO.setup(self.b, GPIO.OUT, initial=GPIO.LOW)
 
     def driveForward(self):
-        print("Driving Forward")
         GPIO.output(self.a, GPIO.LOW)
         GPIO.output(self.b, GPIO.HIGH)
-        self.state = MotorState.STATE_FORWARD
     
     def stop(self):
-        print("Stopping")
         GPIO.output(self.a, GPIO.LOW)
         GPIO.output(self.b, GPIO.LOW)
-        self.state = MotorState.STATE_STOP
     
     def driveBackward(self):
-        print("Driving Backward")
-        GPIO.output(self.a, GPIO.HIGH)
         GPIO.output(self.b, GPIO.LOW)
-        self.state = MotorState.STATE_BACKWARD
+        GPIO.output(self.a, GPIO.HIGH)
 
 
 def signal_handler(sig, frame):

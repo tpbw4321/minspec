@@ -17,11 +17,11 @@ class EventQueue:
         self.eventProcessor = eventProcessor
 
     def EventQueuePush(self, event):
-        self.queue.append(event)
+        self.eventQueue.append(event)
     
     def EventQueuePop(self):
-        if len(self.queue) > 0:
-            return self.queue.pop()
+        if len(self.eventQueue) > 0:
+            return self.eventQueue.pop()
         return None
 
     def Process(self):
@@ -29,7 +29,7 @@ class EventQueue:
             if len(self.eventQueue):
                 event = self.eventQueue.pop()
                 print(f'{datetime.now()}: {event.eventType}')
-                self.eventProcessor(event.eventType)
+                self.eventProcessor(event)
 
     def EventQueueRegister(self, services):
         for service in services:
