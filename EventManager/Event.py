@@ -2,7 +2,7 @@ from enum import Enum
 from datetime import datetime
 
 class Event:
-    def __init__(self, eventType, data):
+    def __init__(self, eventType, data=None):
         self.eventType = eventType
         self.data = data
 
@@ -10,7 +10,6 @@ class EventQueue:
     def __init__(self, eventProcessor=None):
         if not eventProcessor:
             print("eventProcessor is None")
-            return None
         self.eventQueue = []
         self.eventlist = []
         self.services = []
@@ -29,7 +28,8 @@ class EventQueue:
             if len(self.eventQueue):
                 event = self.eventQueue.pop()
                 print(f'{datetime.now()}: {event.eventType}')
-                self.eventProcessor(event)
+                if self.eventProcessor:
+                    self.eventProcessor(event)
 
     def EventQueueRegister(self, services):
         for service in services:
